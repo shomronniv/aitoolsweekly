@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.netlify/
+.astro/
+.newsletter-output.json
+.env
+.env.local
+.DS_Store
+Thumbs.db
+*.log
+screenshot-*.png

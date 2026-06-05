@@ -1,0 +1,448 @@
+---
+import Base from '../layouts/Base.astro';
+import tools from '../../data/tools.json';
+import { getLatestIssue } from '../lib/issues.js';
+
+const featuredTools = tools.filter(t => t.featured).slice(0, 6);
+const latestIssue = await getLatestIssue();
+
+const categories = [...new Set(tools.map(t => t.category))];
+const categoryCounts = Object.fromEntries(
+  categories.map(c => [c, tools.filter(t => t.category === c).length])
+);
+---
+
+<Base title="Home" description="Weekly digest of the best new AI tools for small business owners.">
+
+  <!-- ── HERO ─────────────────────────────────────────────────── -->
+  <div class="hero">
+    <canvas id="neural-canvas" aria-hidden="true"></canvas>
+    <div class="hero-grid">
+      <div class="hero-text">
+        <div class="badge">Free · Every Monday · No spam</div>
+        <h1>The best new AI tools,<br/><span>delivered every Monday</span></h1>
+        <p>We track hundreds of AI tools so small business owners don't have to. One tight email, one link to click.</p>
+        <div class="hero-ctas">
+          <a href="#subscribe" class="btn btn-primary">Subscribe free →</a>
+          <a href="/tools" class="btn btn-ghost">Browse {tools.length} tools</a>
+        </div>
+        <div class="hero-stats">
+          <span>{tools.length} tools reviewed</span>
+          <span>Updated weekly</span>
+          <span>Free forever</span>
+        </div>
+      </div>
+
+      <div class="hero-illustration" aria-hidden="true">
+        <svg viewBox="0 0 440 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0" y="0" width="440" height="320" rx="14" fill="white" stroke="#e5e7eb" stroke-width="1.5"/>
+          <rect x="0" y="0" width="440" height="40" rx="14" fill="#f9fafb"/>
+          <rect x="0" y="26" width="440" height="14" fill="#f9fafb"/>
+          <circle cx="24" cy="20" r="6" fill="#ef4444" opacity="0.8"/>
+          <circle cx="44" cy="20" r="6" fill="#f59e0b" opacity="0.8"/>
+          <circle cx="64" cy="20" r="6" fill="#22c55e" opacity="0.8"/>
+          <rect x="100" y="12" width="200" height="16" rx="8" fill="#f3f4f6"/>
+          <rect x="110" y="18" width="80" height="4" rx="2" fill="#d1d5db"/>
+          <line x1="0" y1="40" x2="440" y2="40" stroke="#e5e7eb" stroke-width="1"/>
+          <rect x="0" y="40" width="110" height="280" fill="#f9fafb"/>
+          <line x1="110" y1="40" x2="110" y2="320" stroke="#e5e7eb" stroke-width="1"/>
+          <rect x="16" y="60" width="78" height="8" rx="4" fill="#dbeafe"/>
+          <rect x="16" y="80" width="60" height="7" rx="3.5" fill="#e5e7eb"/>
+          <rect x="16" y="98" width="70" height="7" rx="3.5" fill="#e5e7eb"/>
+          <rect x="16" y="116" width="52" height="7" rx="3.5" fill="#e5e7eb"/>
+          <rect x="16" y="140" width="78" height="1" rx="0.5" fill="#e5e7eb"/>
+          <rect x="16" y="154" width="44" height="7" rx="3.5" fill="#e5e7eb"/>
+          <rect x="16" y="172" width="62" height="7" rx="3.5" fill="#e5e7eb"/>
+          <!-- Card 1 — blue -->
+          <rect x="124" y="52" width="144" height="116" rx="10" fill="white" stroke="#e5e7eb" stroke-width="1"/>
+          <rect x="124" y="52" width="144" height="5" rx="3" fill="#3b82f6"/>
+          <rect x="136" y="68" width="34" height="34" rx="8" fill="#dbeafe"/>
+          <rect x="143" y="75" width="20" height="4" rx="2" fill="#93c5fd"/>
+          <rect x="143" y="83" width="14" height="4" rx="2" fill="#93c5fd"/>
+          <rect x="143" y="91" width="17" height="4" rx="2" fill="#93c5fd"/>
+          <rect x="178" y="72" width="78" height="7" rx="3.5" fill="#e5e7eb"/>
+          <rect x="178" y="84" width="54" height="6" rx="3" fill="#f3f4f6"/>
+          <rect x="136" y="114" width="120" height="7" rx="3.5" fill="#f3f4f6"/>
+          <rect x="136" y="127" width="88" height="7" rx="3.5" fill="#f3f4f6"/>
+          <rect x="136" y="148" width="100" height="16" rx="6" fill="#3b82f6"/>
+          <rect x="148" y="154" width="50" height="4" rx="2" fill="white" opacity="0.8"/>
+          <!-- Card 2 — green -->
+          <rect x="282" y="52" width="144" height="116" rx="10" fill="white" stroke="#e5e7eb" stroke-width="1"/>
+          <rect x="282" y="52" width="144" height="5" rx="3" fill="#10b981"/>
+          <rect x="294" y="68" width="34" height="34" rx="8" fill="#d1fae5"/>
+          <rect x="301" y="75" width="20" height="4" rx="2" fill="#6ee7b7"/>
+          <rect x="301" y="83" width="14" height="4" rx="2" fill="#6ee7b7"/>
+          <rect x="301" y="91" width="17" height="4" rx="2" fill="#6ee7b7"/>
+          <rect x="336" y="72" width="78" height="7" rx="3.5" fill="#e5e7eb"/>
+          <rect x="336" y="84" width="54" height="6" rx="3" fill="#f3f4f6"/>
+          <rect x="294" y="114" width="120" height="7" rx="3.5" fill="#f3f4f6"/>
+          <rect x="294" y="127" width="88" height="7" rx="3.5" fill="#f3f4f6"/>
+          <rect x="294" y="148" width="100" height="16" rx="6" fill="#10b981"/>
+          <rect x="306" y="154" width="50" height="4" rx="2" fill="white" opacity="0.8"/>
+          <!-- Card 3 — purple -->
+          <rect x="124" y="182" width="144" height="116" rx="10" fill="white" stroke="#e5e7eb" stroke-width="1"/>
+          <rect x="124" y="182" width="144" height="5" rx="3" fill="#8b5cf6"/>
+          <rect x="136" y="198" width="34" height="34" rx="8" fill="#ede9fe"/>
+          <rect x="143" y="205" width="20" height="4" rx="2" fill="#c4b5fd"/>
+          <rect x="143" y="213" width="14" height="4" rx="2" fill="#c4b5fd"/>
+          <rect x="143" y="221" width="17" height="4" rx="2" fill="#c4b5fd"/>
+          <rect x="178" y="202" width="78" height="7" rx="3.5" fill="#e5e7eb"/>
+          <rect x="178" y="214" width="54" height="6" rx="3" fill="#f3f4f6"/>
+          <rect x="136" y="244" width="120" height="7" rx="3.5" fill="#f3f4f6"/>
+          <rect x="136" y="257" width="88" height="7" rx="3.5" fill="#f3f4f6"/>
+          <rect x="136" y="278" width="100" height="16" rx="6" fill="#8b5cf6"/>
+          <rect x="148" y="284" width="50" height="4" rx="2" fill="white" opacity="0.8"/>
+          <!-- Card 4 — orange -->
+          <rect x="282" y="182" width="144" height="116" rx="10" fill="white" stroke="#e5e7eb" stroke-width="1"/>
+          <rect x="282" y="182" width="144" height="5" rx="3" fill="#f97316"/>
+          <rect x="294" y="198" width="34" height="34" rx="8" fill="#ffedd5"/>
+          <rect x="301" y="205" width="20" height="4" rx="2" fill="#fdba74"/>
+          <rect x="301" y="213" width="14" height="4" rx="2" fill="#fdba74"/>
+          <rect x="301" y="221" width="17" height="4" rx="2" fill="#fdba74"/>
+          <rect x="336" y="202" width="78" height="7" rx="3.5" fill="#e5e7eb"/>
+          <rect x="336" y="214" width="54" height="6" rx="3" fill="#f3f4f6"/>
+          <rect x="294" y="244" width="120" height="7" rx="3.5" fill="#f3f4f6"/>
+          <rect x="294" y="257" width="88" height="7" rx="3.5" fill="#f3f4f6"/>
+          <rect x="294" y="278" width="100" height="16" rx="6" fill="#f97316"/>
+          <rect x="306" y="284" width="50" height="4" rx="2" fill="white" opacity="0.8"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── HOW IT WORKS ──────────────────────────────────────────── -->
+  <section class="how-section">
+    <div class="how-grid">
+      <div class="how-item">
+        <div class="how-icon" style="background:rgba(99,102,241,0.15);color:#818cf8">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a8 8 0 100 16A8 8 0 0010 2zm1 11H9V9h2v4zm0-6H9V5h2v2z"/></svg>
+        </div>
+        <h3>We scan everything</h3>
+        <p>Every week our AI monitors 50+ sources — Product Hunt, newsletters, Reddit — for new AI tools worth your time.</p>
+      </div>
+      <div class="how-item">
+        <div class="how-icon" style="background:rgba(16,185,129,0.15);color:#34d399">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path d="M9 12l-3-3 1.4-1.4L9 9.2l4.6-4.6L15 6l-6 6z"/><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16z" clip-rule="evenodd" opacity=".3"/></svg>
+        </div>
+        <h3>Claude picks the best</h3>
+        <p>Claude AI filters out the hype and selects the 3 tools most useful for small business owners that week.</p>
+      </div>
+      <div class="how-item">
+        <div class="how-icon" style="background:rgba(249,115,22,0.15);color:#fb923c">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/></svg>
+        </div>
+        <h3>Lands in your inbox</h3>
+        <p>Every Monday at 8am: a short email, three tools, one practical tip. Read it in under 2 minutes.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── LATEST ISSUE ──────────────────────────────────────────── -->
+  {latestIssue && (
+    <section>
+      <h2>Latest issue</h2>
+      <div class="issue-card">
+        <div>
+          <div class="issue-date">{latestIssue.date}</div>
+          <div class="issue-title">{latestIssue.subject}</div>
+          <div class="issue-preview">{latestIssue.preview}</div>
+        </div>
+        <a href={`/archive#${latestIssue.date}`} class="btn btn-secondary" style="white-space:nowrap">Read →</a>
+      </div>
+    </section>
+  )}
+
+  <!-- ── CATEGORY OVERVIEW ─────────────────────────────────────── -->
+  <section>
+    <h2>Browse by category</h2>
+    <div class="category-grid">
+      {Object.entries(categoryCounts).map(([cat, count]) => (
+        <a href={`/tools?category=${encodeURIComponent(cat)}`} class="category-pill" data-cat={cat}>
+          <span class="category-pill-dot"></span>
+          <span class="category-pill-name">{cat}</span>
+          <span class="category-pill-count">{count}</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- ── FEATURED TOOLS ────────────────────────────────────────── -->
+  <section>
+    <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:0.5rem">
+      <h2 style="margin:0">Featured tools this week</h2>
+      <a href="/tools" style="font-size:0.875rem;color:#6366f1;text-decoration:none;font-weight:600">Browse all {tools.length} →</a>
+    </div>
+    <div class="tools-grid">
+      {featuredTools.map(tool => (
+        <div class="tool-card" data-cat={tool.category}>
+          <div class="tool-card-header">
+            <img src={tool.logo} alt={tool.name} class="tool-logo" loading="lazy" />
+            <div>
+              <div class="tool-name">{tool.name}</div>
+              <div class="tool-category">{tool.category}</div>
+            </div>
+          </div>
+          <p class="tool-tagline">{tool.tagline}</p>
+          <p class="tool-pricing">{tool.pricing}</p>
+          <div style="display:flex;gap:0.5rem">
+            <a href={`/tools/${tool.slug}`} class="btn btn-secondary" style="font-size:0.8rem;padding:0.4rem 0.9rem">Details</a>
+            <a href={tool.affiliateUrl} target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="font-size:0.8rem;padding:0.4rem 0.9rem">Try free →</a>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- ── SUBSCRIBE ─────────────────────────────────────────────── -->
+  <div class="subscribe-box" id="subscribe">
+    <h2>Get next week's digest</h2>
+    <p>Join small business owners getting smarter about AI every Monday. Free. Unsubscribe in one click.</p>
+    <form class="subscribe-form" name="subscribe" method="POST" data-netlify="true">
+      <input type="hidden" name="form-name" value="subscribe" />
+      <input type="email" name="email" placeholder="your@email.com" required />
+      <button type="submit" class="btn btn-primary">Subscribe</button>
+    </form>
+    <p style="margin-top:1rem;font-size:0.75rem;color:#3d4460">No spam. No selling your email. Unsubscribe anytime.</p>
+  </div>
+
+</Base>
+
+<style>
+/* ── Neural canvas ─────────────────────────────────────────────── */
+#neural-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ── How it works ──────────────────────────────────────────────── */
+.how-section {
+  margin-bottom: 3.5rem;
+  padding: 2.5rem;
+  background: var(--bg-card);
+  border-radius: 16px;
+  border: 1px solid var(--border);
+}
+
+.how-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+.how-item h3 { margin-top: 0.75rem; margin-bottom: 0.4rem; font-size: 1rem; color: var(--text); }
+.how-item p  { font-size: 0.875rem; color: var(--text-muted); margin: 0; }
+
+.how-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Category pills ────────────────────────────────────────────── */
+.category-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 1rem 0 2.5rem;
+}
+
+.category-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 1rem;
+  border-radius: 20px;
+  border: 1px solid var(--border-mid);
+  background: var(--bg-card);
+  text-decoration: none;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.15s;
+}
+
+.category-pill:hover { border-color: var(--accent); color: #818cf8; transform: translateY(-1px); }
+
+.category-pill-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-dim);
+  flex-shrink: 0;
+}
+
+.category-pill[data-cat="Productivity"] .category-pill-dot { background: #3b82f6; }
+.category-pill[data-cat="Content"]      .category-pill-dot { background: #10b981; }
+.category-pill[data-cat="Design"]       .category-pill-dot { background: #8b5cf6; }
+.category-pill[data-cat="Sales"]        .category-pill-dot { background: #f97316; }
+.category-pill[data-cat="Customer Support"] .category-pill-dot { background: #14b8a6; }
+.category-pill[data-cat="Finance"]      .category-pill-dot { background: #f59e0b; }
+.category-pill[data-cat="HR"]           .category-pill-dot { background: #ec4899; }
+
+.category-pill-count {
+  font-size: 0.72rem;
+  background: var(--bg-raised);
+  color: var(--text-muted);
+  padding: 1px 7px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+@media (max-width: 720px) {
+  .how-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+  .how-section { padding: 1.75rem; }
+}
+</style>
+
+<script is:inline>
+(function () {
+  const canvas = document.getElementById('neural-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+
+  const COUNT    = 55;
+  const MAX_DIST = 115;
+  let particles  = [];
+  let raf;
+
+  /* ── sizing ─────────────────────────────────────── */
+  function resize() {
+    const r = canvas.parentElement.getBoundingClientRect();
+    canvas.width  = r.width;
+    canvas.height = r.height;
+  }
+
+  /* ── spawn particles ─────────────────────────────── */
+  function spawn() {
+    particles = Array.from({ length: COUNT }, () => ({
+      x:     Math.random() * canvas.width,
+      y:     Math.random() * canvas.height,
+      vx:    (Math.random() - 0.5) * 0.42,
+      vy:    (Math.random() - 0.5) * 0.42,
+      r:     Math.random() * 1.6 + 0.6,
+      phase: Math.random() * Math.PI * 2,
+    }));
+  }
+
+  /* ── pulses traveling along edges ───────────────── */
+  const pulses = [];   // { i, j, t }  t: 0→1
+  let  pulseTimer = 0;
+
+  function maybeAddPulse() {
+    pulseTimer++;
+    if (pulseTimer < 40) return;   // every ~40 frames
+    pulseTimer = 0;
+
+    // pick a random close pair
+    const close = [];
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        if (dx*dx + dy*dy < (MAX_DIST * 0.65) ** 2) close.push([i, j]);
+      }
+    }
+    if (close.length) {
+      const [i, j] = close[Math.floor(Math.random() * close.length)];
+      pulses.push({ i, j, t: 0 });
+    }
+  }
+
+  /* ── main loop ────────────────────────────────────── */
+  function loop() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    /* move */
+    for (const p of particles) {
+      p.x += p.vx;  p.y += p.vy;  p.phase += 0.017;
+      if (p.x < 0 || p.x > canvas.width)  p.vx *= -1;
+      if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+    }
+
+    /* connections */
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const d  = Math.sqrt(dx*dx + dy*dy);
+        if (d < MAX_DIST) {
+          const a = (1 - d / MAX_DIST) * 0.18;
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = `rgba(129,140,248,${a})`;
+          ctx.lineWidth = 0.75;
+          ctx.stroke();
+        }
+      }
+    }
+
+    /* pulses */
+    maybeAddPulse();
+    for (let k = pulses.length - 1; k >= 0; k--) {
+      const pulse = pulses[k];
+      pulse.t += 0.018;
+      if (pulse.t > 1) { pulses.splice(k, 1); continue; }
+
+      const a = particles[pulse.i];
+      const b = particles[pulse.j];
+      const px = a.x + (b.x - a.x) * pulse.t;
+      const py = a.y + (b.y - a.y) * pulse.t;
+
+      const fadeAlpha = Math.sin(pulse.t * Math.PI);   // ease in-out
+      const grad = ctx.createRadialGradient(px, py, 0, px, py, 6);
+      grad.addColorStop(0, `rgba(200,200,255,${fadeAlpha * 0.9})`);
+      grad.addColorStop(0.4, `rgba(99,102,241,${fadeAlpha * 0.5})`);
+      grad.addColorStop(1,   'rgba(99,102,241,0)');
+      ctx.beginPath();
+      ctx.arc(px, py, 6, 0, Math.PI * 2);
+      ctx.fillStyle = grad;
+      ctx.fill();
+    }
+
+    /* nodes */
+    for (const p of particles) {
+      const pulse = (Math.sin(p.phase) + 1) / 2;   // 0–1
+      const alpha = 0.3 + pulse * 0.5;
+      const r     = p.r + pulse * 1.4;
+
+      /* glow halo */
+      const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r * 5);
+      g.addColorStop(0, `rgba(99,102,241,${alpha * 0.28})`);
+      g.addColorStop(1, 'rgba(99,102,241,0)');
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, r * 5, 0, Math.PI * 2);
+      ctx.fillStyle = g;
+      ctx.fill();
+
+      /* core */
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(165,170,255,${alpha})`;
+      ctx.fill();
+    }
+
+    raf = requestAnimationFrame(loop);
+  }
+
+  /* ── init ─────────────────────────────────────────── */
+  const ro = new ResizeObserver(() => { resize(); spawn(); });
+  ro.observe(canvas.parentElement);
+  resize();
+  spawn();
+  loop();
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) cancelAnimationFrame(raf);
+    else loop();
+  });
+})();
+</script>

@@ -1,0 +1,16 @@
+---
+const { issue, expanded = false } = Astro.props;
+---
+<div class="issue-card" id={issue.date}>
+  <div>
+    <div class="issue-date">{issue.date}</div>
+    <div class="issue-title">{issue.subject}</div>
+    <div class="issue-preview">{issue.preview}</div>
+    {expanded && (
+      <div class="issue-expanded issue-body" set:html={issue.body.replace(/\n/g, '<br>')} />
+    )}
+  </div>
+  {!expanded && (
+    <a href={`/archive#${issue.date}`} class="btn btn-secondary">Read →</a>
+  )}
+</div>

@@ -1,0 +1,41 @@
+---
+import Base from '../layouts/Base.astro';
+import { getAllIssues } from '../lib/issues.js';
+
+const issues = await getAllIssues();
+---
+
+<Base title="Newsletter Archive" description="Browse all past issues of AI Tools Weekly — weekly digests of the best new AI tools for small business owners.">
+  <h1>Newsletter Archive</h1>
+  <p>Every issue of AI Tools Weekly, going back to the start. {issues.length > 0 ? `${issues.length} issue${issues.length === 1 ? '' : 's'} so far.` : 'The first issue publishes next Monday.'}</p>
+
+  {issues.length === 0 && (
+    <div style="text-align:center;padding:4rem 0;color:#888">
+      <p>No issues yet — the first one goes out this Monday.</p>
+      <a href="/#subscribe" class="btn btn-primary" style="margin-top:1rem">Subscribe to get it</a>
+    </div>
+  )}
+
+  {issues.length > 0 && (
+    <div class="issue-list" style="margin-top:2rem">
+      {issues.map(issue => (
+        <div class="issue-card" id={issue.date}>
+          <div style="flex:1">
+            <div class="issue-date">{issue.date}</div>
+            <div class="issue-title">{issue.subject}</div>
+            <div class="issue-preview">{issue.preview}</div>
+            <details style="margin-top:1rem">
+              <summary style="cursor:pointer;font-size:0.875rem;color:#0066cc">Read full issue</summary>
+              <div class="issue-body" style="margin-top:1rem;white-space:pre-wrap">{issue.body}</div>
+            </details>
+          </div>
+        </div>
+      ))}
+    </div>
+  )}
+
+  <div style="margin-top:3rem;padding-top:2rem;border-top:1px solid #eee;text-align:center">
+    <p>Never miss an issue.</p>
+    <a href="/#subscribe" class="btn btn-primary">Subscribe free →</a>
+  </div>
+</Base>

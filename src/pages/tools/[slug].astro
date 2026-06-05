@@ -1,0 +1,57 @@
+---
+import Base from '../../layouts/Base.astro';
+import tools from '../../../data/tools.json';
+
+export function getStaticPaths() {
+  return tools.map(tool => ({
+    params: { slug: tool.slug },
+    props: { tool },
+  }));
+}
+
+const { tool } = Astro.props;
+---
+
+<Base title={tool.name} description={`${tool.tagline} — ${tool.bestFor}`}>
+  <div class="breadcrumb">
+    <a href="/">Home</a> › <a href="/tools">Tools</a> › {tool.name}
+  </div>
+
+  <div class="tool-detail">
+    <div class="tool-detail-header">
+      <img src={tool.logo} alt={tool.name} class="tool-detail-logo" loading="lazy" />
+      <div>
+        <h1 style="margin-bottom:0.25rem">{tool.name}</h1>
+        <span class="badge">{tool.category}</span>
+      </div>
+    </div>
+
+    <p style="font-size:1.1rem;color:#333">{tool.tagline}</p>
+
+    <div class="tool-meta">
+      <div class="tool-meta-item"><strong>Pricing:</strong> {tool.pricing}</div>
+      <div class="tool-meta-item"><strong>Added:</strong> {tool.addedDate}</div>
+    </div>
+
+    <h2>Best for</h2>
+    <p>{tool.bestFor}</p>
+
+    <div style="margin-top:2rem;display:flex;gap:0.75rem;flex-wrap:wrap">
+      <a href={tool.affiliateUrl} target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="font-size:1rem;padding:0.65rem 1.5rem">
+        Try {tool.name} Free →
+      </a>
+      <a href={tool.url} target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
+        Visit website
+      </a>
+    </div>
+
+    <p style="font-size:0.8rem;color:#aaa;margin-top:1rem">
+      * This is an affiliate link. We may earn a commission at no cost to you.
+    </p>
+  </div>
+
+  <div style="margin-top:3rem;padding-top:2rem;border-top:1px solid #eee">
+    <h2>Browse more tools</h2>
+    <p><a href="/tools">← Back to all tools</a></p>
+  </div>
+</Base>

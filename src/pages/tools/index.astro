@@ -1,0 +1,56 @@
+---
+import Base from '../../layouts/Base.astro';
+import tools from '../../../data/tools.json';
+
+const categories = [...new Set(tools.map(t => t.category))].sort();
+---
+
+<Base title="All AI Tools" description="Browse our full directory of AI tools for small business owners, filtered by category.">
+  <h1>AI Tools Directory</h1>
+  <p>Browse {tools.length} AI tools curated for small business owners. Click any tool to try it.</p>
+
+  <div class="filter-bar" id="filter-bar">
+    <button class="filter-btn active" data-category="all">All</button>
+    {categories.map(cat => (
+      <button class="filter-btn" data-category={cat}>{cat}</button>
+    ))}
+  </div>
+
+  <div class="tools-grid" id="tools-grid">
+    {tools.map(tool => (
+      <div class="tool-card" data-category={tool.category} data-cat={tool.category}>
+        <div class="tool-card-header">
+          <img src={tool.logo} alt={tool.name} class="tool-logo" loading="lazy" />
+          <div>
+            <div class="tool-name">{tool.name}</div>
+            <div class="tool-category">{tool.category}</div>
+          </div>
+        </div>
+        <p class="tool-tagline">{tool.tagline}</p>
+        <p class="tool-pricing">{tool.pricing}</p>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+          <a href={`/tools/${tool.slug}`} class="btn btn-secondary">Details</a>
+          <a href={tool.affiliateUrl} target="_blank" rel="noopener noreferrer" class="btn btn-primary">Try free →</a>
+        </div>
+      </div>
+    ))}
+  </div>
+</Base>
+
+<script>
+  const filterBar = document.getElementById('filter-bar');
+  const grid = document.getElementById('tools-grid');
+
+  filterBar?.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest('.filter-btn') as HTMLButtonElement | null;
+    if (!btn) return;
+
+    filterBar.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    const category = btn.dataset.category;
+    grid?.querySelectorAll<HTMLElement>('.tool-card').forEach(card => {
+      card.style.display = (category === 'all' || card.dataset.category === category) ? '' : 'none';
+    });
+  });
+</script>
