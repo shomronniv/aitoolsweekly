@@ -1,0 +1,338 @@
+---
+import Base from '../layouts/Base.astro';
+import tools from '../../data/tools.json';
+
+const toolsJson = JSON.stringify(tools);
+---
+
+<Base title="Find Your Tools" description="Answer 3 quick questions and get AI tool recommendations tailored to your business.">
+
+  <div style="max-width:680px;margin:0 auto;">
+
+    <div style="margin-bottom:2rem;">
+      <a href="/" style="font-size:0.875rem;color:var(--text-muted);text-decoration:none;">← Home</a>
+    </div>
+
+    <div class="badge">AI-powered matching</div>
+    <h1>Find your perfect AI tools</h1>
+    <p style="font-size:1.1rem;max-width:520px;">Answer 3 quick questions and we'll match you with the best tools for your business — no browsing required.</p>
+
+    <!-- Step indicators -->
+    <div class="steps-indicator">
+      <div class="step-dot active" id="dot-1"></div>
+      <div class="step-line"></div>
+      <div class="step-dot" id="dot-2"></div>
+      <div class="step-line"></div>
+      <div class="step-dot" id="dot-3"></div>
+    </div>
+
+    <!-- Step 1: Business type -->
+    <div class="quiz-step" id="step-1">
+      <h2 class="step-question">What type of business do you run?</h2>
+      <div class="choice-grid">
+        <button class="choice-card" data-value="freelancer">
+          <span class="choice-emoji">💼</span>
+          <span class="choice-label">Freelancer / Solo</span>
+          <span class="choice-sub">Consultant, designer, writer</span>
+        </button>
+        <button class="choice-card" data-value="ecommerce">
+          <span class="choice-emoji">🛒</span>
+          <span class="choice-label">E-commerce</span>
+          <span class="choice-sub">Online store or marketplace</span>
+        </button>
+        <button class="choice-card" data-value="agency">
+          <span class="choice-emoji">🏢</span>
+          <span class="choice-label">Agency</span>
+          <span class="choice-sub">Marketing, design, or creative</span>
+        </button>
+        <button class="choice-card" data-value="local">
+          <span class="choice-emoji">📍</span>
+          <span class="choice-label">Local Business</span>
+          <span class="choice-sub">Restaurant, salon, gym, shop</span>
+        </button>
+        <button class="choice-card" data-value="saas">
+          <span class="choice-emoji">🚀</span>
+          <span class="choice-label">SaaS / Startup</span>
+          <span class="choice-sub">Software or tech product</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 2: Challenge -->
+    <div class="quiz-step hidden" id="step-2">
+      <h2 class="step-question">What's your biggest time drain?</h2>
+      <div class="choice-grid">
+        <button class="choice-card" data-value="content">
+          <span class="choice-emoji">✍️</span>
+          <span class="choice-label">Creating content</span>
+          <span class="choice-sub">Blogs, ads, social, emails</span>
+        </button>
+        <button class="choice-card" data-value="customers">
+          <span class="choice-emoji">💬</span>
+          <span class="choice-label">Managing customers</span>
+          <span class="choice-sub">Support, follow-ups, CRM</span>
+        </button>
+        <button class="choice-card" data-value="admin">
+          <span class="choice-emoji">📋</span>
+          <span class="choice-label">Admin & operations</span>
+          <span class="choice-sub">Tasks, invoicing, coordination</span>
+        </button>
+        <button class="choice-card" data-value="sales">
+          <span class="choice-emoji">📈</span>
+          <span class="choice-label">Growing sales</span>
+          <span class="choice-sub">Leads, conversions, pipeline</span>
+        </button>
+        <button class="choice-card" data-value="video">
+          <span class="choice-emoji">🎬</span>
+          <span class="choice-label">Video & media</span>
+          <span class="choice-sub">Editing, recording, podcasts</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 3: Budget -->
+    <div class="quiz-step hidden" id="step-3">
+      <h2 class="step-question">What's your monthly tool budget?</h2>
+      <div class="choice-grid choice-grid-3">
+        <button class="choice-card" data-value="free">
+          <span class="choice-emoji">🆓</span>
+          <span class="choice-label">Free only</span>
+          <span class="choice-sub">Just getting started</span>
+        </button>
+        <button class="choice-card" data-value="under50">
+          <span class="choice-emoji">💰</span>
+          <span class="choice-label">Under $50/mo</span>
+          <span class="choice-sub">Lean and focused</span>
+        </button>
+        <button class="choice-card" data-value="any">
+          <span class="choice-emoji">🚀</span>
+          <span class="choice-label">No limit</span>
+          <span class="choice-sub">Best tools, whatever the cost</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div class="quiz-step hidden" id="step-results">
+      <div class="results-header">
+        <span style="font-size:2rem;">🎯</span>
+        <h2 style="margin:0.5rem 0 0.25rem;">Your top tool picks</h2>
+        <p id="results-subtitle" style="color:var(--text-muted);margin:0;"></p>
+      </div>
+      <div id="results-grid" class="tools-grid" style="margin-top:1.5rem;"></div>
+      <div style="text-align:center;margin-top:2rem;display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+        <button class="btn btn-secondary" id="restart-btn">← Try again</button>
+        <a href="/stacks" class="btn btn-primary">See full tool stacks →</a>
+      </div>
+    </div>
+
+  </div>
+
+</Base>
+
+<script define:vars={{ toolsJson }}>
+  const tools = JSON.parse(toolsJson);
+  const answers = { businessType: null, useCase: null, budget: null };
+  let currentStep = 1;
+
+  function goToStep(n) {
+    document.querySelectorAll('.quiz-step').forEach(s => s.classList.add('hidden'));
+    document.querySelectorAll('.step-dot').forEach((d, i) => {
+      d.classList.toggle('active', i < n);
+    });
+    const target = n === 4 ? 'step-results' : `step-${n}`;
+    const el = document.getElementById(target);
+    el.classList.remove('hidden');
+    el.classList.add('fade-in');
+    currentStep = n;
+  }
+
+  function getRecommendations() {
+    const scored = tools.map(tool => {
+      let score = 0;
+      if (tool.businessTypes.includes(answers.businessType)) score += 3;
+      if (tool.useCases.includes(answers.useCase)) score += 2;
+      // Budget filter
+      const price = tool.pricing.toLowerCase();
+      if (answers.budget === 'free' && !price.includes('free')) score -= 10;
+      if (answers.budget === 'under50') {
+        const match = tool.pricing.match(/\$(\d+)/g);
+        if (match) {
+          const nums = match.map(m => parseInt(m.replace('$', '')));
+          const min = Math.min(...nums);
+          if (min > 50) score -= 5;
+        }
+      }
+      return { ...tool, score };
+    });
+    return scored.sort((a, b) => b.score - a.score).slice(0, 3);
+  }
+
+  function renderResults(results) {
+    const subtitleMap = {
+      freelancer: 'Freelancer / Solo business',
+      ecommerce: 'E-commerce',
+      agency: 'Agency',
+      local: 'Local business',
+      saas: 'SaaS / Startup'
+    };
+    document.getElementById('results-subtitle').textContent =
+      `Based on your ${subtitleMap[answers.businessType]} needs — personalised just for you`;
+
+    const grid = document.getElementById('results-grid');
+    grid.innerHTML = results.map(tool => `
+      <div class="tool-card">
+        <div class="tool-card-header">
+          <img src="${tool.logo}" alt="${tool.name}" class="tool-logo" loading="lazy" onerror="this.style.display='none'" />
+          <div>
+            <div class="tool-name">${tool.name}</div>
+            <div class="tool-category">${tool.category}</div>
+          </div>
+        </div>
+        <p class="tool-tagline">${tool.tagline}</p>
+        <p class="tool-pricing">${tool.pricing}</p>
+        <div style="display:flex;gap:0.5rem;margin-top:auto;">
+          <a href="/tools/${tool.slug}" class="btn btn-secondary" style="flex:1;text-align:center;">Details</a>
+          <a href="${tool.affiliateUrl}" target="_blank" rel="noopener" class="btn btn-primary" style="flex:1;text-align:center;">Try free →</a>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Wire up choice cards
+  document.querySelectorAll('.choice-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const val = card.dataset.value;
+      const step = currentStep;
+
+      // Visual selection
+      card.closest('.choice-grid').querySelectorAll('.choice-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+
+      setTimeout(() => {
+        if (step === 1) { answers.businessType = val; goToStep(2); }
+        else if (step === 2) { answers.useCase = val; goToStep(3); }
+        else if (step === 3) {
+          answers.budget = val;
+          const results = getRecommendations();
+          renderResults(results);
+          goToStep(4);
+        }
+      }, 250);
+    });
+  });
+
+  document.getElementById('restart-btn').addEventListener('click', () => {
+    answers.businessType = null; answers.useCase = null; answers.budget = null;
+    document.querySelectorAll('.choice-card').forEach(c => c.classList.remove('selected'));
+    goToStep(1);
+  });
+</script>
+
+<style>
+  .steps-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin: 2rem 0 3rem;
+  }
+
+  .step-dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: var(--surface);
+    transition: all 0.3s;
+    flex-shrink: 0;
+  }
+
+  .step-dot.active {
+    background: var(--brand);
+    border-color: var(--brand);
+  }
+
+  .step-line {
+    flex: 1;
+    height: 2px;
+    background: var(--border);
+  }
+
+  .step-question {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    font-size: 1.3rem;
+  }
+
+  .choice-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1rem;
+  }
+
+  .choice-grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .choice-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 1.25rem;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.15s;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .choice-card:hover {
+    border-color: var(--brand);
+    box-shadow: 0 4px 16px rgba(99,102,241,0.12);
+    transform: translateY(-2px);
+  }
+
+  .choice-card.selected {
+    border-color: var(--brand);
+    background: var(--brand-light);
+    box-shadow: 0 4px 16px rgba(99,102,241,0.18);
+  }
+
+  .choice-emoji {
+    font-size: 1.5rem;
+    margin-bottom: 4px;
+    display: block;
+  }
+
+  .choice-label {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--text);
+    display: block;
+  }
+
+  .choice-sub {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    display: block;
+  }
+
+  .hidden { display: none !important; }
+
+  .fade-in {
+    animation: fadeSlideIn 0.35s ease both;
+  }
+
+  @keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .results-header {
+    text-align: center;
+    padding: 1.5rem 0 0.5rem;
+  }
+</style>

@@ -1,0 +1,111 @@
+---
+import Base from '../../layouts/Base.astro';
+import tools from '../../../data/tools.json';
+
+const categories = [...new Set(tools.map(t => t.category))].sort();
+
+// Mark tools added in the last 30 days
+const today = new Date();
+const toolsWithFreshness = tools.map(t => {
+  const added = new Date(t.addedDate);
+  const diffDays = (today.getTime() - added.getTime()) / (1000 * 60 * 60 * 24);
+  return { ...t, isNew: diffDays <= 30 };
+});
+---
+
+<Base title="All AI Tools" description="Browse our complete directory of AI tools for small business owners.">
+  <h1>AI Tools Directory</h1>
+  <p>Browse {tools.length} AI tools across {categories.length} categories — all vetted for real business value.</p>
+
+  <div style="display:flex;gap:1rem;margin-bottom:2rem;align-items:center;flex-wrap:wrap;">
+    <a href="/recommend" class="btn btn-primary">🎯 Find the right tools for me</a>
+    <a href="/stacks" class="btn btn-secondary">Browse curated stacks</a>
+  </div>
+
+  <div class="filter-buttons">
+    <button class="filter-btn active" data-category="all">All</button>
+    {categories.map(cat => (
+      <button class="filter-btn" data-category={cat}>{cat}</button>
+    ))}
+  </div>
+
+  <div class="tools-grid" id="tools-grid">
+    {toolsWithFreshness.map(tool => (
+      <div class="tool-card" data-category={tool.category}>
+        <div class="tool-card-header">
+          <img src={tool.logo} alt={tool.name} class="tool-logo" loading="lazy" />
+          <div style="flex:1;min-width:0;">
+            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+              <div class="tool-name">{tool.name}</div>
+              {tool.isNew && <span class="new-badge-sm">New</span>}
+            </div>
+            <div class="tool-category">{tool.category}</div>
+          </div>
+        </div>
+        <p class="tool-tagline">{tool.tagline}</p>
+        <p class="tool-pricing">{tool.pricing}</p>
+        <div style="display:flex;gap:0.5rem;margin-top:auto;">
+          <a href={`/tools/${tool.slug}`} class="btn btn-secondary" style="flex:1;text-align:center;">Details</a>
+          <a href={tool.affiliateUrl} target="_blank" rel="noopener" class="btn btn-primary" style="flex:1;text-align:center;">Try free →</a>
+        </div>
+      </div>
+    ))}
+  </div>
+</Base>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>('.filter-btn');
+  const cards = document.querySelectorAll<HTMLElement>('.tool-card[data-category]');
+
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const category = btn.dataset.category ?? 'all';
+      buttons.forEach(b => b.classList.toggle('active', b === btn));
+      cards.forEach(card => {
+        const show = category === 'all' || card.dataset.category === category;
+        (card as HTMLElement).style.display = show ? '' : 'none';
+      });
+    });
+  });
+</script>
+
+<style>
+  .filter-buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin: 1.5rem 0 2rem;
+  }
+
+  .filter-btn {
+    padding: 0.4rem 1rem;
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    background: var(--surface);
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+
+  .filter-btn:hover { border-color: var(--brand); color: var(--brand); }
+
+  .filter-btn.active {
+    background: var(--brand);
+    color: #fff;
+    border-color: var(--brand);
+  }
+
+  .new-badge-sm {
+    font-size: 0.6rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    background: #dcfce7;
+    color: #15803d;
+    padding: 1px 6px;
+    border-radius: 20px;
+  }
+</style>

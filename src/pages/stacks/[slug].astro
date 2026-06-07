@@ -1,0 +1,246 @@
+---
+import Base from '../../layouts/Base.astro';
+import stacks from '../../../data/stacks.json';
+import tools from '../../../data/tools.json';
+
+export function getStaticPaths() {
+  return stacks.map(stack => ({
+    params: { slug: stack.slug },
+    props: { stack },
+  }));
+}
+
+const { stack } = Astro.props;
+const stackTools = stack.tools.map(slug => tools.find(t => t.slug === slug)).filter(Boolean);
+---
+
+<Base title={stack.name} description={stack.tagline}>
+
+  <div style="margin-bottom:2rem;">
+    <a href="/stacks" style="font-size:0.875rem;color:var(--text-muted);text-decoration:none;">← All Stacks</a>
+  </div>
+
+  <div class="stack-hero">
+    <div class="stack-hero-emoji">{stack.emoji}</div>
+    <div>
+      <span class="stack-type-badge">{stack.businessType}</span>
+      <h1 style="margin-bottom:0.5rem;">{stack.name}</h1>
+      <p style="font-size:1.1rem;color:var(--text-muted);margin:0;">{stack.tagline}</p>
+    </div>
+  </div>
+
+  <div class="stack-summary-bar">
+    <div class="summary-stat">
+      <span class="summary-label">Tools included</span>
+      <span class="summary-value">{stackTools.length}</span>
+    </div>
+    <div class="summary-stat">
+      <span class="summary-label">Monthly cost</span>
+      <span class="summary-value">{stack.monthlyCost}</span>
+    </div>
+    <div class="summary-stat">
+      <span class="summary-label">Estimated time saved</span>
+      <span class="summary-value">{stack.timeSaved}</span>
+    </div>
+  </div>
+
+  <div class="stack-description">
+    <p>{stack.description}</p>
+  </div>
+
+  <h2>What's in the stack</h2>
+
+  <div class="stack-tools">
+    {stackTools.map((tool, i) => (
+      <div class="stack-tool-row">
+        <div class="stack-tool-num">{i + 1}</div>
+        <img src={tool.logo} alt={tool.name} class="tool-logo" loading="lazy" style="width:48px;height:48px;border-radius:10px;" />
+        <div class="stack-tool-info">
+          <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;">
+            <span class="stack-tool-name">{tool.name}</span>
+            <span class="tool-category">{tool.category}</span>
+            <span class="stack-tool-price">{tool.pricing}</span>
+          </div>
+          <p class="stack-tool-tagline">{tool.tagline}</p>
+          <p style="font-size:0.85rem;color:var(--text-muted);margin:0;">{tool.bestFor}</p>
+        </div>
+        <div class="stack-tool-actions">
+          <a href={`/tools/${tool.slug}`} class="btn btn-secondary" style="white-space:nowrap;">Details</a>
+          <a href={tool.affiliateUrl} target="_blank" rel="noopener" class="btn btn-primary" style="white-space:nowrap;">Try free →</a>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <div class="stack-cta-box">
+    <h2 style="margin-top:0;">Get the full stack</h2>
+    <p>We'll send you a step-by-step setup guide for the {stack.name} — including free trial links and tips for getting started.</p>
+    <form class="subscribe-form" name="stack-guide" method="POST" data-netlify="true" style="max-width:440px;">
+      <input type="hidden" name="form-name" value="stack-guide" />
+      <input type="hidden" name="stack" value={stack.name} />
+      <input type="email" name="email" placeholder="your@email.com" required />
+      <button type="submit" class="btn">Send me the guide →</button>
+    </form>
+    <p style="font-size:0.78rem;color:rgba(255,255,255,0.65);margin-bottom:0;margin-top:1rem;">Free. No spam. Unsubscribe anytime.</p>
+  </div>
+
+  <div style="margin-top:3rem;text-align:center;">
+    <p style="color:var(--text-muted);">Looking for a different stack?</p>
+    <a href="/stacks" class="btn btn-secondary">Browse all stacks →</a>
+  </div>
+
+</Base>
+
+<style>
+  .stack-hero {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .stack-hero-emoji {
+    font-size: 3.5rem;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .stack-type-badge {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--brand);
+    background: var(--brand-light);
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 0.75rem;
+  }
+
+  .stack-summary-bar {
+    display: flex;
+    gap: 0;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 2rem;
+  }
+
+  .summary-stat {
+    flex: 1;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    border-right: 1px solid var(--border);
+  }
+
+  .summary-stat:last-child { border-right: none; }
+
+  .summary-label {
+    font-size: 0.75rem;
+    color: var(--text-light);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .summary-value {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+
+  .stack-description {
+    background: var(--surface-2);
+    border-left: 3px solid var(--brand);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .stack-description p { margin: 0; color: var(--text-muted); line-height: 1.7; }
+
+  .stack-tools {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 3rem;
+  }
+
+  .stack-tool-row {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.2s, border-color 0.2s;
+  }
+
+  .stack-tool-row:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--brand-light);
+  }
+
+  .stack-tool-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--brand-light);
+    color: var(--brand);
+    font-size: 0.8rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .stack-tool-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .stack-tool-name {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--text);
+  }
+
+  .stack-tool-price {
+    font-size: 0.78rem;
+    color: var(--text-light);
+    font-weight: 500;
+  }
+
+  .stack-tool-tagline {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin: 0.25rem 0 0.25rem;
+  }
+
+  .stack-tool-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  .stack-cta-box {
+    background: linear-gradient(135deg, #4f46e5 0%, #6366f1 50%, #818cf8 100%);
+    border-radius: var(--radius-lg);
+    padding: 3rem 2.5rem;
+    text-align: center;
+    color: white;
+  }
+
+  .stack-cta-box h2 { color: #fff; }
+  .stack-cta-box p { color: rgba(255,255,255,0.8); }
+  .stack-cta-box .subscribe-form input { border: none; border-radius: var(--radius-sm); padding: 0.7rem 1.1rem; font-size: 0.95rem; }
+  .stack-cta-box .btn { background: #fff; color: var(--brand-dark); font-weight: 700; }
+</style>

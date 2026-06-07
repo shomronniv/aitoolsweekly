@@ -1,0 +1,17 @@
+{
+  "name": "aitoolsweekly",
+  "type": "module",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "digest": "node scripts/generate-digest.js && node scripts/send-newsletter.js"
+  },
+  "dependencies": {
+    "astro": "^4.0.0",
+    "@astrojs/netlify": "^5.0.0",
+    "@anthropic-ai/sdk": "^0.24.0",
+    "resend": "^3.0.0"
+  }
+}

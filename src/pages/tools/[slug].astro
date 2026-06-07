@@ -1,0 +1,318 @@
+---
+import Base from '../../layouts/Base.astro';
+import tools from '../../../data/tools.json';
+
+export function getStaticPaths() {
+  return tools.map(tool => ({
+    params: { slug: tool.slug },
+    props: { tool },
+  }));
+}
+
+const { tool } = Astro.props;
+const toolJson = JSON.stringify(tool);
+---
+
+<Base title={tool.name} description={`${tool.tagline} — ${tool.bestFor}`}>
+
+  <div style="margin-bottom:1.5rem">
+    <a href="/tools" style="font-size:0.875rem;color:var(--text-muted);text-decoration:none;">← All Tools</a>
+  </div>
+
+  <div class="tool-detail-header">
+    <img src={tool.logo} alt={tool.name} class="tool-detail-logo" loading="lazy" />
+    <div>
+      <div style="margin-bottom:0.5rem;">
+        <span class="tool-category">{tool.category}</span>
+      </div>
+      <h1 style="margin-bottom:0.35rem;">{tool.name}</h1>
+      <p style="font-size:1.1rem;color:var(--text-muted);margin:0;">{tool.tagline}</p>
+    </div>
+  </div>
+
+  <div class="tool-info-bar">
+    <div class="info-stat">
+      <span class="info-label">Pricing</span>
+      <span class="info-value">{tool.pricing}</span>
+    </div>
+    <div class="info-stat">
+      <span class="info-label">Category</span>
+      <span class="info-value">{tool.category}</span>
+    </div>
+    <div class="info-stat">
+      <span class="info-label">Added</span>
+      <span class="info-value">{tool.addedDate}</span>
+    </div>
+  </div>
+
+  <div class="best-for-box">
+    <h3 style="margin-top:0;margin-bottom:0.5rem;">Best for</h3>
+    <p style="margin:0;color:var(--text-muted);">{tool.bestFor}</p>
+  </div>
+
+  <!-- ROI Calculator -->
+  <div class="roi-card">
+    <div class="roi-header">
+      <span class="roi-icon">💰</span>
+      <div>
+        <h2 style="margin:0 0 0.25rem;">ROI Calculator</h2>
+        <p style="margin:0;font-size:0.9rem;color:var(--text-muted);">How much time and money could {tool.name} save you?</p>
+      </div>
+    </div>
+
+    <div class="roi-sliders">
+      <div class="roi-slider-group">
+        <div class="roi-slider-label">
+          <span>Hours/week on <strong id="task-label">{tool.roiTask}</strong></span>
+          <span class="roi-slider-val"><span id="hours-val">{tool.roiHoursDefault}</span> hrs</span>
+        </div>
+        <input type="range" id="hours-slider" min="1" max="40" value={tool.roiHoursDefault} step="1" class="roi-range" />
+      </div>
+
+      <div class="roi-slider-group">
+        <div class="roi-slider-label">
+          <span>Your hourly rate</span>
+          <span class="roi-slider-val">$<span id="rate-val">50</span>/hr</span>
+        </div>
+        <input type="range" id="rate-slider" min="15" max="300" value="50" step="5" class="roi-range" />
+      </div>
+
+      <div class="roi-slider-group">
+        <div class="roi-slider-label">
+          <span>Time saved with AI (typical)</span>
+          <span class="roi-slider-val"><span id="saving-val">60</span>%</span>
+        </div>
+        <input type="range" id="saving-slider" min="20" max="90" value="60" step="5" class="roi-range" />
+      </div>
+    </div>
+
+    <div class="roi-results">
+      <div class="roi-result-card">
+        <span class="roi-result-label">Hours saved/week</span>
+        <span class="roi-result-value" id="hours-saved">—</span>
+      </div>
+      <div class="roi-result-card highlight">
+        <span class="roi-result-label">Money saved/month</span>
+        <span class="roi-result-value" id="money-saved">—</span>
+      </div>
+      <div class="roi-result-card">
+        <span class="roi-result-label">Saved/year</span>
+        <span class="roi-result-value" id="year-saved">—</span>
+      </div>
+    </div>
+
+    <p class="roi-disclaimer">Estimates based on typical AI time-saving for this category. Your results may vary.</p>
+  </div>
+
+  <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:2.5rem;">
+    <a href={tool.affiliateUrl} target="_blank" rel="noopener" class="btn btn-primary btn-lg">
+      Try {tool.name} free →
+    </a>
+    <a href={tool.url} target="_blank" rel="noopener" class="btn btn-secondary btn-lg">
+      Visit website
+    </a>
+  </div>
+
+  <p style="font-size:0.8rem;color:var(--text-light);margin-top:1.5rem;">
+    Affiliate disclosure: The "Try free" link above may earn us a commission at no cost to you.
+    We only feature tools we'd genuinely recommend.
+  </p>
+
+</Base>
+
+<script define:vars={{ toolJson }}>
+  const tool = JSON.parse(toolJson);
+
+  const hoursSlider  = document.getElementById('hours-slider');
+  const rateSlider   = document.getElementById('rate-slider');
+  const savingSlider = document.getElementById('saving-slider');
+
+  function update() {
+    const hours   = parseInt(hoursSlider.value);
+    const rate    = parseInt(rateSlider.value);
+    const saving  = parseInt(savingSlider.value) / 100;
+
+    const hoursSaved  = Math.round(hours * saving * 10) / 10;
+    const moneySaved  = Math.round(hoursSaved * rate * 4.33);
+    const yearSaved   = Math.round(moneySaved * 12);
+
+    document.getElementById('hours-val').textContent   = hours;
+    document.getElementById('rate-val').textContent    = rate;
+    document.getElementById('saving-val').textContent  = Math.round(saving * 100);
+    document.getElementById('hours-saved').textContent = `${hoursSaved} hrs`;
+    document.getElementById('money-saved').textContent = `$${moneySaved.toLocaleString()}`;
+    document.getElementById('year-saved').textContent  = `$${yearSaved.toLocaleString()}`;
+  }
+
+  hoursSlider.addEventListener('input', update);
+  rateSlider.addEventListener('input', update);
+  savingSlider.addEventListener('input', update);
+  update();
+</script>
+
+<style>
+  .tool-detail-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .tool-detail-logo {
+    width: 80px;
+    height: 80px;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    object-fit: contain;
+    background: var(--surface-2);
+    padding: 8px;
+    flex-shrink: 0;
+  }
+
+  .tool-info-bar {
+    display: flex;
+    gap: 0;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+  }
+
+  .info-stat {
+    flex: 1;
+    padding: 1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    border-right: 1px solid var(--border);
+  }
+
+  .info-stat:last-child { border-right: none; }
+  .info-label { font-size: 0.7rem; color: var(--text-light); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+  .info-value { font-size: 0.95rem; font-weight: 700; color: var(--text); }
+
+  .best-for-box {
+    background: var(--surface-2);
+    border-left: 3px solid var(--brand);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  /* ROI Calculator */
+  .roi-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    box-shadow: var(--shadow-md);
+    margin: 2rem 0;
+  }
+
+  .roi-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .roi-icon {
+    font-size: 2rem;
+    line-height: 1;
+  }
+
+  .roi-sliders {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .roi-slider-group { display: flex; flex-direction: column; gap: 0.5rem; }
+
+  .roi-slider-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+  }
+
+  .roi-slider-val {
+    font-weight: 700;
+    color: var(--brand);
+    min-width: 60px;
+    text-align: right;
+  }
+
+  .roi-range {
+    width: 100%;
+    height: 5px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: var(--border);
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  .roi-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    background: var(--brand);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(99,102,241,0.4);
+  }
+
+  .roi-results {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .roi-result-card {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .roi-result-card.highlight {
+    background: var(--brand-light);
+    border-color: #a5b4fc;
+  }
+
+  .roi-result-label {
+    font-size: 0.72rem;
+    color: var(--text-light);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .roi-result-value {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.03em;
+  }
+
+  .roi-result-card.highlight .roi-result-value { color: var(--brand-dark); }
+
+  .roi-disclaimer {
+    font-size: 0.75rem;
+    color: var(--text-light);
+    margin: 0;
+    text-align: center;
+  }
+</style>

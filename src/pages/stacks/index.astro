@@ -1,0 +1,151 @@
+---
+import Base from '../../layouts/Base.astro';
+import stacks from '../../../data/stacks.json';
+---
+
+<Base title="Tool Stacks" description="Curated AI tool bundles for every type of small business. Stop browsing — get the full stack.">
+
+  <div class="badge">Curated bundles</div>
+  <h1>AI Tool Stacks</h1>
+  <p style="font-size:1.1rem;max-width:560px;">
+    Stop piecing tools together one by one. We've built complete AI setups for 5 types of small businesses — just pick yours.
+  </p>
+
+  <div class="stacks-grid">
+    {stacks.map(stack => (
+      <a href={`/stacks/${stack.slug}`} class="stack-card">
+        <div class="stack-emoji">{stack.emoji}</div>
+        <div class="stack-meta">
+          <span class="stack-type">{stack.businessType}</span>
+        </div>
+        <h3 class="stack-name">{stack.name}</h3>
+        <p class="stack-tagline">{stack.tagline}</p>
+        <div class="stack-stats">
+          <span class="stack-stat">
+            <span class="stack-stat-label">Monthly cost</span>
+            <span class="stack-stat-value">{stack.monthlyCost}</span>
+          </span>
+          <span class="stack-stat">
+            <span class="stack-stat-label">Time saved</span>
+            <span class="stack-stat-value">{stack.timeSaved}</span>
+          </span>
+          <span class="stack-stat">
+            <span class="stack-stat-label">Tools</span>
+            <span class="stack-stat-value">{stack.tools.length} tools</span>
+          </span>
+        </div>
+        <span class="stack-cta">See the stack →</span>
+      </a>
+    ))}
+  </div>
+
+  <div class="subscribe-box" id="subscribe" style="margin-top:4rem;">
+    <h2>New stacks every month</h2>
+    <p>We add new stacks as new tools emerge. Subscribe to get notified.</p>
+    <form class="subscribe-form" name="subscribe" method="POST" data-netlify="true">
+      <input type="hidden" name="form-name" value="subscribe" />
+      <input type="email" name="email" placeholder="your@email.com" required />
+      <button type="submit" class="btn">Subscribe free →</button>
+    </form>
+  </div>
+
+</Base>
+
+<style>
+  .stacks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2.5rem;
+  }
+
+  .stack-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.75rem;
+    text-decoration: none;
+    color: var(--text);
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  }
+
+  .stack-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--brand-light);
+  }
+
+  .stack-emoji {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .stack-meta {
+    margin-bottom: 0.5rem;
+  }
+
+  .stack-type {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--brand);
+    background: var(--brand-light);
+    padding: 2px 8px;
+    border-radius: 20px;
+  }
+
+  .stack-name {
+    font-size: 1.15rem;
+    font-weight: 800;
+    margin: 0.75rem 0 0.5rem;
+    letter-spacing: -0.02em;
+  }
+
+  .stack-tagline {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+    flex: 1;
+    line-height: 1.5;
+  }
+
+  .stack-stats {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1.25rem;
+  }
+
+  .stack-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+  }
+
+  .stack-stat-label {
+    font-size: 0.7rem;
+    color: var(--text-light);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .stack-stat-value {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .stack-cta {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--brand);
+  }
+</style>

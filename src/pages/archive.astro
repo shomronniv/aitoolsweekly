@@ -1,0 +1,35 @@
+---
+import Base from '../layouts/Base.astro';
+import { getAllIssues } from '../lib/issues.js';
+
+const issues = await getAllIssues();
+---
+
+<Base title="Archive" description="Browse all past AI Tools Weekly newsletter issues.">
+  <h1>Newsletter Archive</h1>
+  <p>Every issue we've published, free to read.</p>
+
+  {issues.length === 0 ? (
+    <div style="text-align:center;padding:4rem 0;color:#888">
+      <p>No issues yet — the first one goes out Monday!</p>
+      <a href="/#subscribe" class="btn btn-primary" style="margin-top:1rem">Subscribe to get notified</a>
+    </div>
+  ) : (
+    <div class="issue-list" style="margin-top:2rem">
+      {issues.map(issue => (
+        <div class="issue-card" id={issue.date}>
+          <div>
+            <div class="issue-date">{issue.date}</div>
+            <div class="issue-title">{issue.subject}</div>
+            <div class="issue-preview">{issue.preview}</div>
+          </div>
+        </div>
+      ))}
+    </div>
+  )}
+
+  <div style="margin-top:3rem;text-align:center">
+    <p>Want every issue delivered to your inbox?</p>
+    <a href="/#subscribe" class="btn btn-primary">Subscribe — it's free</a>
+  </div>
+</Base>

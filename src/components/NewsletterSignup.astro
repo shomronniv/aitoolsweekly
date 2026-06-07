@@ -1,0 +1,12 @@
+---
+const { heading = "Get next week's digest", subtext = "Join 1,000+ small business owners. Free, every Monday. Unsubscribe anytime." } = Astro.props;
+---
+<div class="subscribe-box" id="subscribe">
+  <h2>{heading}</h2>
+  <p>{subtext}</p>
+  <form class="subscribe-form" name="subscribe" method="POST" data-netlify="true">
+    <input type="hidden" name="form-name" value="subscribe" />
+    <input type="email" name="email" placeholder="your@email.com" required />
+    <button type="submit" class="btn btn-primary">Subscribe</button>
+  </form>
+</div>

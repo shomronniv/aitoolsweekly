@@ -1,0 +1,57 @@
+[
+  {
+    "slug": "freelancer-stack",
+    "name": "The Freelancer Stack",
+    "emoji": "💼",
+    "tagline": "Run your entire solo business with AI — from writing to invoicing",
+    "description": "Whether you're a writer, designer, consultant, or developer, these four tools cover every part of running a solo business: creating content, communicating with clients, managing your time, and getting paid.",
+    "businessType": "Freelancer",
+    "monthlyCost": "$35–$45/mo",
+    "timeSaved": "~8 hrs/week",
+    "tools": ["copy-ai", "loom", "notion-ai", "freshbooks"]
+  },
+  {
+    "slug": "ecommerce-stack",
+    "name": "The E-commerce Stack",
+    "emoji": "🛒",
+    "tagline": "Drive more traffic, convert more customers, and automate your store",
+    "description": "This stack gives e-commerce owners AI superpowers for content, SEO, customer relationships, and workflow automation — the four pillars of a growing online store.",
+    "businessType": "E-commerce",
+    "monthlyCost": "$125–$155/mo",
+    "timeSaved": "~12 hrs/week",
+    "tools": ["writesonic", "surfer-seo", "hubspot", "zapier"]
+  },
+  {
+    "slug": "agency-stack",
+    "name": "The Agency Stack",
+    "emoji": "🏢",
+    "tagline": "Deliver more client work in less time without hiring more people",
+    "description": "Agencies live and die by output speed and quality. This stack covers content creation at scale, SEO deliverables, video production, and project coordination — everything you need to handle more clients without burning out.",
+    "businessType": "Agency",
+    "monthlyCost": "$160–$200/mo",
+    "timeSaved": "~15 hrs/week",
+    "tools": ["jasper", "surfer-seo", "descript", "monday-com"]
+  },
+  {
+    "slug": "local-business-stack",
+    "name": "The Local Business Stack",
+    "emoji": "📍",
+    "tagline": "Serve more customers and cut admin time for your local business",
+    "description": "Restaurants, salons, gyms, and other local businesses spend too much time on admin and customer communication. This stack automates follow-ups, organises your customer base, and handles billing — so you can focus on what you do best.",
+    "businessType": "Local Business",
+    "monthlyCost": "$50–$75/mo",
+    "timeSaved": "~7 hrs/week",
+    "tools": ["hubspot", "freshdesk", "zapier", "freshbooks"]
+  },
+  {
+    "slug": "saas-startup-stack",
+    "name": "The SaaS Startup Stack",
+    "emoji": "🚀",
+    "tagline": "Build, grow, and support your SaaS with a lean AI-powered team",
+    "description": "Early-stage SaaS teams need to do everything with few people. This stack covers internal knowledge management, CRM, project tracking, async communication, and automation — the five tools that let a team of 3 operate like a team of 10.",
+    "businessType": "SaaS Startup",
+    "monthlyCost": "$75–$110/mo",
+    "timeSaved": "~10 hrs/week",
+    "tools": ["notion-ai", "hubspot", "monday-com", "loom", "zapier"]
+  }
+]

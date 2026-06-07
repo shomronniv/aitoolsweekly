@@ -1,0 +1,290 @@
+---
+import Base from '../layouts/Base.astro';
+import tools from '../../data/tools.json';
+import stacks from '../../data/stacks.json';
+import { getLatestIssue } from '../lib/issues.js';
+
+const featuredTools = tools.filter(t => t.featured).slice(0, 6);
+const latestIssue = await getLatestIssue();
+
+const today = new Date();
+const newTools = tools.filter(t => {
+  const diffDays = (today.getTime() - new Date(t.addedDate).getTime()) / (1000 * 60 * 60 * 24);
+  return diffDays <= 30;
+}).slice(0, 4);
+
+// Marquee: duplicate tools for seamless loop
+const marqueeTools = [...tools, ...tools];
+---
+
+<Base title="Home" description="Weekly digest of the best new AI tools for small business owners.">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-blob hero-blob-1"></div>
+    <div class="hero-blob hero-blob-2"></div>
+    <div class="hero-blob hero-blob-3"></div>
+
+    <div class="badge">Free weekly digest</div>
+    <h1>The best AI tools for<br/><span class="gradient-text" id="typewriter-target">small businesses</span></h1>
+
+    <p class="hero-sub">We track hundreds of AI tools so you don't have to.</p>
+    <p class="typewriter-wrap">Built for <span id="typewriter">freelancers</span></p>
+
+    <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+      <a href="/recommend" class="btn btn-primary btn-lg">🎯 Find my tools →</a>
+      <a href="#subscribe" class="btn btn-secondary btn-lg">Subscribe free</a>
+    </div>
+  </div>
+
+  <!-- Stats bar -->
+  <div class="stats-bar fade-up">
+    <div class="stat">
+      <div class="stat-value" data-count="{tools.length}" id="stat-tools">0</div>
+      <div class="stat-label">Tools reviewed</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value" data-count="1000" id="stat-subs">0</div>
+      <div class="stat-label">Subscribers</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">Every Monday</div>
+      <div class="stat-label">New issue drops</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">100% Free</div>
+      <div class="stat-label">Always</div>
+    </div>
+  </div>
+
+  <!-- Marquee -->
+  <div class="marquee-section">
+    <div class="marquee-track">
+      {marqueeTools.map(tool => (
+        <div class="marquee-item">
+          <img src={tool.logo} alt={tool.name} class="marquee-logo" />
+          {tool.name}
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <!-- Feature promos -->
+  <div class="feature-promo-grid fade-up">
+    <a href="/recommend" class="feature-promo promo-primary">
+      <div class="promo-icon">🎯</div>
+      <h3>Find your tools in 30 seconds</h3>
+      <p>Answer 3 questions. Get a personalised list of the right AI tools for your business — no browsing, no guessing.</p>
+      <span class="promo-cta">Try the recommender →</span>
+    </a>
+    <a href="/stacks" class="feature-promo promo-secondary">
+      <div class="promo-icon">📦</div>
+      <h3>Pre-built AI stacks</h3>
+      <p>5 curated tool bundles by business type — Freelancer, E-commerce, Agency, Local Business, SaaS. Ready to go.</p>
+      <span class="promo-cta">Browse stacks →</span>
+    </a>
+  </div>
+
+  <!-- Featured tools -->
+  <section class="fade-up">
+    <div class="section-header">
+      <h2>Featured tools this week</h2>
+      <a href="/tools">View all {tools.length} tools →</a>
+    </div>
+    <div class="tools-grid">
+      {featuredTools.map(tool => (
+        <div class="tool-card">
+          <div class="tool-card-header">
+            <img src={tool.logo} alt={tool.name} class="tool-logo" loading="lazy" />
+            <div>
+              <div class="tool-name">{tool.name}</div>
+              <div class="tool-category">{tool.category}</div>
+            </div>
+          </div>
+          <p class="tool-tagline">{tool.tagline}</p>
+          <p class="tool-pricing">{tool.pricing}</p>
+          <div style="display:flex;gap:0.5rem;margin-top:auto;">
+            <a href={`/tools/${tool.slug}`} class="btn btn-secondary" style="flex:1">Details</a>
+            <a href={tool.affiliateUrl} target="_blank" rel="noopener" class="btn btn-primary" style="flex:1">Try free →</a>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Just Added -->
+  {newTools.length > 0 && (
+    <section class="fade-up">
+      <div class="section-header">
+        <h2>🆕 Just added</h2>
+        <a href="/tools">See all →</a>
+      </div>
+      <div class="new-tools-list">
+        {newTools.map(tool => (
+          <a href={`/tools/${tool.slug}`} class="new-tool-row">
+            <img src={tool.logo} alt={tool.name} class="tool-logo" loading="lazy" style="width:36px;height:36px;" />
+            <div class="new-tool-info">
+              <span class="new-tool-name">{tool.name}</span>
+              <span class="new-tool-tagline">{tool.tagline}</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:0.75rem;flex-shrink:0;">
+              <span class="new-badge">New</span>
+              <span class="new-tool-price">{tool.pricing}</span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+  )}
+
+  <!-- Stacks preview -->
+  <section class="fade-up">
+    <div class="section-header">
+      <h2>Tool stacks by business type</h2>
+      <a href="/stacks">All stacks →</a>
+    </div>
+    <div class="stacks-preview-grid">
+      {stacks.slice(0, 3).map(stack => (
+        <a href={`/stacks/${stack.slug}`} class="stack-preview-card">
+          <span class="stack-preview-emoji">{stack.emoji}</span>
+          <div>
+            <div class="stack-preview-name">{stack.name}</div>
+            <div class="stack-preview-meta">{stack.tools.length} tools · {stack.timeSaved}</div>
+          </div>
+          <span style="color:var(--brand);font-weight:600;font-size:1rem;flex-shrink:0;">→</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <div class="how-it-works fade-up">
+    <h2>How it works</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-icon">🔍</div>
+        <h3>We track everything</h3>
+        <p>Our AI scans hundreds of new tools each week so you don't have to waste time hunting them down.</p>
+      </div>
+      <div class="step">
+        <div class="step-icon">✂️</div>
+        <h3>We curate the best</h3>
+        <p>Only tools genuinely useful for small business owners make the cut. No hype, no fluff.</p>
+      </div>
+      <div class="step">
+        <div class="step-icon">📬</div>
+        <h3>You get it Monday</h3>
+        <p>One email, every Monday morning. Bite-sized, actionable, and always free.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Latest issue -->
+  {latestIssue && (
+    <section class="fade-up">
+      <div class="section-header">
+        <h2>Latest issue</h2>
+        <a href="/archive">See all issues →</a>
+      </div>
+      <div class="issue-card">
+        <div>
+          <div class="issue-date">{latestIssue.date}</div>
+          <div class="issue-title">{latestIssue.subject}</div>
+          <div class="issue-preview">{latestIssue.preview}</div>
+        </div>
+        <a href={`/archive#${latestIssue.date}`} class="btn btn-secondary" style="flex-shrink:0">Read issue →</a>
+      </div>
+    </section>
+  )}
+
+  <!-- Subscribe CTA -->
+  <div class="subscribe-box fade-up" id="subscribe">
+    <h2>Get next week's digest</h2>
+    <p>Join 1,000+ small business owners who save hours every week. Free, every Monday. Unsubscribe anytime.</p>
+    <form class="subscribe-form" name="subscribe" method="POST" data-netlify="true">
+      <input type="hidden" name="form-name" value="subscribe" />
+      <input type="email" name="email" placeholder="your@email.com" required />
+      <button type="submit" class="btn">Subscribe free →</button>
+    </form>
+  </div>
+
+</Base>
+
+<script>
+  // ── Typewriter ──
+  const words = ['freelancers', 'agencies', 'e-commerce stores', 'local businesses', 'SaaS startups', 'consultants'];
+  let wi = 0, ci = 0, deleting = false;
+  const el = document.getElementById('typewriter');
+
+  function tick() {
+    const word = words[wi];
+    if (!deleting) {
+      el.textContent = word.slice(0, ++ci);
+      if (ci === word.length) { deleting = true; setTimeout(tick, 1800); return; }
+    } else {
+      el.textContent = word.slice(0, --ci);
+      if (ci === 0) { deleting = false; wi = (wi + 1) % words.length; }
+    }
+    setTimeout(tick, deleting ? 60 : 100);
+  }
+  setTimeout(tick, 800);
+
+  // ── Animated stat counters ──
+  function animateCount(el, target, suffix = '') {
+    let start = 0;
+    const duration = 1800;
+    const step = (timestamp) => {
+      if (!start) start = timestamp;
+      const progress = Math.min((timestamp - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      el.textContent = Math.floor(eased * target).toLocaleString() + suffix;
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+
+  const statsObserver = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const toolsEl = document.getElementById('stat-tools');
+        const subsEl  = document.getElementById('stat-subs');
+        if (toolsEl) animateCount(toolsEl, parseInt(toolsEl.dataset.count || '12'), '+');
+        if (subsEl)  animateCount(subsEl,  1000, '+');
+        statsObserver.disconnect();
+      }
+    });
+  }, { threshold: 0.3 });
+
+  const statsBar = document.querySelector('.stats-bar');
+  if (statsBar) statsObserver.observe(statsBar);
+
+  // ── Scroll fade-in ──
+  const fadeObserver = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); fadeObserver.unobserve(e.target); }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-up').forEach(el => fadeObserver.observe(el));
+
+  // ── Logo fallback ──
+  const colors = ['#818cf8','#a78bfa','#ec4899','#f59e0b','#10b981','#3b82f6'];
+  document.querySelectorAll('img.tool-logo, img.marquee-logo').forEach(img => {
+    img.addEventListener('error', function() {
+      const letter = (this.alt || '?').charAt(0).toUpperCase();
+      const color = colors[letter.charCodeAt(0) % colors.length];
+      const s = 80;
+      const c = document.createElement('canvas');
+      c.width = c.height = s;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = color + '22';
+      ctx.fillRect(0,0,s,s);
+      ctx.fillStyle = color;
+      ctx.font = `bold ${s*0.45}px Inter,sans-serif`;
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(letter, s/2, s/2);
+      this.src = c.toDataURL();
+      this.onerror = null;
+    });
+  });
+</script>

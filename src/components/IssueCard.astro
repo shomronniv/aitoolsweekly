@@ -1,0 +1,11 @@
+---
+const { issue } = Astro.props;
+---
+<div class="issue-card" id={issue.date}>
+  <div>
+    <div class="issue-date">{issue.date}</div>
+    <div class="issue-title">{issue.subject}</div>
+    <div class="issue-preview">{issue.preview}</div>
+  </div>
+  <a href={`/archive#${issue.date}`} class="btn btn-secondary">Read →</a>
+</div>

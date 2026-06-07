@@ -1,0 +1,18 @@
+---
+const { tool } = Astro.props;
+---
+<div class="tool-card">
+  <div class="tool-card-header">
+    <img src={tool.logo} alt={tool.name} class="tool-logo" loading="lazy" />
+    <div>
+      <div class="tool-name">{tool.name}</div>
+      <div class="tool-category">{tool.category}</div>
+    </div>
+  </div>
+  <p class="tool-tagline">{tool.tagline}</p>
+  <p class="tool-pricing">{tool.pricing}</p>
+  <div style="display:flex;gap:0.5rem;margin-top:auto;">
+    <a href={`/tools/${tool.slug}`} class="btn btn-secondary" style="flex:1;text-align:center">Details</a>
+    <a href={tool.affiliateUrl} target="_blank" rel="noopener" class="btn btn-primary" style="flex:1;text-align:center">Try free →</a>
+  </div>
+</div>
