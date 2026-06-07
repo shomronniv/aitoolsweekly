@@ -105,4 +105,4 @@ async function run() {
   console.log('Done. Newsletter output saved.');
 }
 
-run().catch(console.error);
+run().catch(err => { console.error('Generate failed:', err); process.exit(1); });
