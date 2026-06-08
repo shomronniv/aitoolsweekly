@@ -17,13 +17,14 @@ const issues = await getAllIssues();
   ) : (
     <div class="issue-list" style="margin-top:2rem">
       {issues.map(issue => (
-        <div class="issue-card" id={issue.date}>
+        <a href={`/archive/${issue.date}`} class="issue-card" id={issue.date} style="display:flex;justify-content:space-between;align-items:center;text-decoration:none;color:inherit;">
           <div>
             <div class="issue-date">{issue.date}</div>
             <div class="issue-title">{issue.subject}</div>
             <div class="issue-preview">{issue.preview}</div>
           </div>
-        </div>
+          <span style="color:var(--brand);font-weight:600;flex-shrink:0;margin-left:1.5rem;">Read →</span>
+        </a>
       ))}
     </div>
   )}

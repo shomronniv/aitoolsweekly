@@ -17,7 +17,25 @@ const newTools = tools.filter(t => {
 const marqueeTools = [...tools, ...tools];
 ---
 
-<Base title="Home" description="Weekly digest of the best new AI tools for small business owners.">
+<Base title="Home" description="Weekly digest of the best new AI tools for small business owners. Free every Monday — curated for freelancers, agencies, and small businesses.">
+
+<script type="application/ld+json" set:html={JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "AI Tools Weekly",
+  "url": "https://aitoolsweekly.netlify.app",
+  "description": "Free weekly newsletter of the best AI tools for small business owners.",
+  "publisher": {
+    "@type": "Organization",
+    "name": "AI Tools Weekly",
+    "url": "https://aitoolsweekly.netlify.app"
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://aitoolsweekly.netlify.app/tools?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+})} />
 
   <!-- Hero -->
   <div class="hero">
@@ -192,7 +210,7 @@ const marqueeTools = [...tools, ...tools];
           <div class="issue-title">{latestIssue.subject}</div>
           <div class="issue-preview">{latestIssue.preview}</div>
         </div>
-        <a href={`/archive#${latestIssue.date}`} class="btn btn-secondary" style="flex-shrink:0">Read issue →</a>
+        <a href={`/archive/${latestIssue.date}`} class="btn btn-secondary" style="flex-shrink:0">Read issue →</a>
       </div>
     </section>
   )}

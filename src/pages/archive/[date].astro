@@ -1,0 +1,104 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getAllIssues } from '../../lib/issues.js';
+
+export async function getStaticPaths() {
+  const issues = await getAllIssues();
+  return issues.map(issue => ({
+    params: { date: issue.date },
+    props: { issue },
+  }));
+}
+
+const { issue } = Astro.props;
+
+// Render basic markdown (bold, links, headings) to HTML
+function renderMarkdown(text) {
+  return text
+    .replace(/## (.+)/g, '<h2>$1</h2>')
+    .replace(/### (.+)/g, '<h3>$1</h3>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>')
+    .replace(/\n\n/g, '</p><p>')
+    .replace(/^/, '<p>')
+    .replace(/$/, '</p>')
+    .replace(/<p><h/g, '<h')
+    .replace(/<\/h(\d)><\/p>/g, '</h$1>');
+}
+
+const formattedDate = new Date(issue.date + 'T00:00:00').toLocaleDateString('en-US', {
+  year: 'numeric', month: 'long', day: 'numeric',
+});
+---
+
+<Base
+  title={issue.subject}
+  description={issue.preview}
+  ogType="article"
+>
+
+  <div style="margin-bottom:1.5rem">
+    <a href="/archive" style="font-size:0.875rem;color:var(--text-muted);text-decoration:none;">← All issues</a>
+  </div>
+
+  <article>
+    <div style="margin-bottom:0.5rem;font-size:0.85rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:0.05em;">
+      {formattedDate}
+    </div>
+    <h1 style="margin-bottom:1rem;">{issue.subject}</h1>
+    <p style="font-size:1.1rem;color:var(--text-muted);border-left:3px solid var(--brand);padding-left:1rem;margin-bottom:2.5rem;">{issue.preview}</p>
+
+    <div class="issue-body" set:html={renderMarkdown(issue.body)} />
+  </article>
+
+  <div style="margin-top:3rem;padding:2.5rem;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-lg);text-align:center">
+    <h2 style="margin-top:0">Get every issue in your inbox</h2>
+    <p style="color:var(--text-muted);margin-bottom:1.5rem;">Free, every Monday. Join small business owners who stay ahead of the AI curve.</p>
+    <a href="/#subscribe" class="btn btn-primary" style="font-size:1rem;padding:0.75rem 2rem">Subscribe free →</a>
+  </div>
+
+  <div style="margin-top:2rem;text-align:center">
+    <a href="/archive" style="color:var(--text-muted);font-size:0.9rem">← Browse all issues</a>
+  </div>
+
+</Base>
+
+<style>
+  .issue-body {
+    line-height: 1.8;
+    font-size: 1.05rem;
+    color: var(--text);
+  }
+
+  .issue-body h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin: 2rem 0 0.75rem;
+    color: var(--text);
+  }
+
+  .issue-body h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 1.5rem 0 0.5rem;
+  }
+
+  .issue-body p {
+    margin-bottom: 1.25rem;
+  }
+
+  .issue-body a {
+    color: var(--brand);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .issue-body a:hover {
+    text-decoration: underline;
+  }
+
+  .issue-body strong {
+    font-weight: 700;
+    color: var(--text);
+  }
+</style>
